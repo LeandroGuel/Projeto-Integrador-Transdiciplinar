@@ -68,7 +68,7 @@ document.getElementById('btnRegister')?.addEventListener('click', async () => {
       }]);
     }
 
-    alertSuccess('Conta criada com sucesso!', 'Você já pode fazer login.');
+    alertSuccess('Conta criada com sucesso!', 'Um e-mail foi enviado para o endereço informado. É necessário confirmá-lo antes de fazer login.');
     setTimeout(() => (location.href = 'login.html'), 2000);
   } catch (err) {
     console.error(err);
