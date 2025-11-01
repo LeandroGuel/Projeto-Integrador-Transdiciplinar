@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu perfil</title>
+  <link rel="stylesheet" href="./CSS/style.css">
+</head>
+<body>
+  <main class="container">
+    <h2>Meu Perfil</h2>
+
+    <div style="text-align:center;margin-bottom:20px;">
+      <img id="avatarPreview" src="https://www.gravatar.com/avatar/?d=mp" 
+           alt="Avatar" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:2px solid #ccc;">
+      <div style="margin-top:8px;">
+        <button id="btnChangeAvatar" class="btn-ghost">Alterar foto</button>
+        <input id="avatarFile" type="file" accept="image/*" style="display:none;">
+      </div>
+    </div>
+
+    <input id="name" class="input" placeholder="Nome">
+    <input id="phone" class="input" placeholder="Telefone">
+
+    <h3 style="margin-top:24px;">Endereço</h3>
+    <input id="cep" class="input" placeholder="CEP">
+    <input id="street" class="input" placeholder="Rua">
+    <input id="number" class="input" placeholder="Número">
+    <input id="complement" class="input" placeholder="Complemento">
+    <input id="city" class="input" placeholder="Cidade">
+    <input id="state" class="input" placeholder="Estado">
+
+    <button id="saveProfile" class="btn" style="margin-top:20px;">Salvar alterações</button>
+  </main>
+
+  <script type="module" src="./js/user/profile.js"></script>
+  <script type="module">
+    import { loadMenu } from './js/common/menu.js';
+    loadMenu();
+  </script>
+</body>
+</html>

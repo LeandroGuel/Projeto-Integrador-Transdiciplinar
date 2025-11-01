@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ponto de venda Cupcakes</title>
+  <link rel="stylesheet" href="./CSS/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <h2 class="title">Ponto Cupcakes</h2>
+      <button id="logoutBtn" class="btn-ghost small">Sair</button>
+    </header>
+
+    <div class="search-bar">
+      <input id="searchTerm" class="input" placeholder="Buscar por nome, sabor ou ingrediente...">
+      <button id="btnSearch" class="btn">Buscar</button>
+    </div>
+
+    <div id="promotions"></div>
+    <div id="cupcakes"></div>
+  </main>
+
+  <nav class="bottom-nav">
+    <div class="nav-item" onclick="location.href='./index.html'">Home</div>
+    <div class="nav-item" onclick="location.href='./cart.html'">Carrinho</div>
+    <div class="nav-item" onclick="location.href='./orders.html'">Pedidos</div>
+    <div class="nav-item" onclick="location.href='./profile.html'">Perfil</div>
+  </nav>
+
+  <script type="module" src="./js/user/home.js"></script>
+  <script type="module" src="./js/alert.js"></script>
+  <script type="module">
+    import { loadMenu } from './js/common/menu.js';
+    loadMenu();
+  </script>
+</body>
+</html>

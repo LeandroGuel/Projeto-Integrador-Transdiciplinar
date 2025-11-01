@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciar cupcakes</title>
+  <link rel="stylesheet" href="./CSS/style.css">
+</head>
+<body>
+  <main class="container">
+    <h2>Cupcakes</h2>
+    <div class="card">
+      <input id="name" class="input" placeholder="Nome do cupcake">
+      <input id="flavor" class="input" placeholder="Sabor">
+      <input id="ingredients" class="input" placeholder="Ingredientes">
+      <textarea id="description" class="input" placeholder="Descrição"></textarea>
+      <input id="price" class="input" placeholder="Preço">
+
+      <div class="image-upload">
+        <img id="previewCupcake" src="https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg" alt="Prévia da imagem">
+        <label for="imageFile">Selecionar imagem</label>
+        <input id="imageFile" type="file" accept="image/*">
+      </div>
+
+      <button id="save" class="btn">Salvar</button>
+    </div>
+    <div id="list"></div>
+  </main>
+
+  <script type="module">
+    const fileInput = document.getElementById('imageFile');
+    const preview = document.getElementById('previewCupcake');
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => (preview.src = evt.target.result);
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+
+  <script type="module" src="./js/admin/admin_cupcakes.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar conta</title>
+  <link rel="stylesheet" href="./CSS/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <main class="container">
+    <div class="card">
+      <h2>Criar conta</h2>
+
+      <div style="text-align:center;margin-bottom:16px;">
+        <img id="avatarPreview" 
+             src="https://www.gravatar.com/avatar/?d=mp" 
+             alt="Avatar" 
+             style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:2px solid #ccc;">
+        <div style="margin-top:8px;">
+          <button id="btnChangeAvatar" class="btn-ghost">Adicionar foto</button>
+          <input id="avatarFile" type="file" accept="image/*" style="display:none;">
+        </div>
+      </div>
+
+      <input id="name" class="input" placeholder="Nome completo">
+      <input id="phone" type="number" class="input" placeholder="Telefone">
+      <input id="email" class="input" placeholder="E-mail">
+      <input id="password" type="password" class="input" placeholder="Senha">
+      <input id="confirmPassword" type="password" class="input" placeholder="Confirmar senha">
+
+      <h4 style="margin-top:16px;">Endereço</h4>
+      <input id="cep" type="number" class="input" placeholder="CEP">
+      <input id="street" class="input" placeholder="Rua">
+      <input id="number" type="number" class="input" placeholder="Número">
+      <input id="complement" class="input" placeholder="Complemento">
+      <input id="neighborhood" class="input" placeholder="Bairro">
+      <input id="city" class="input" placeholder="Cidade">
+      <input id="state" class="input" placeholder="Estado">
+
+      <button id="btnRegister" class="btn" style="margin-top:12px;">Cadastrar</button>
+
+      <div>
+        <p style="text-align:center;margin-top:12px;">
+          <a href="./login.html">Já tenho conta</a>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="./js/auth/register.js"></script>
+</body>
+</html>

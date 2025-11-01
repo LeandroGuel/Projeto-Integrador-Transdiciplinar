@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel administrativo</title>
+  <link rel="stylesheet" href="./CSS/style.css">
+</head>
+<body>
+  <main class="container">
+    <h2>Painel administrativo</h2>
+
+    <section class="card" id="summarySection" style="margin-bottom:20px;">
+      <h3>Resumo geral</h3>
+      <div id="summaryGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px;">
+        <div class="card small-card">
+          <h4>Cupcakes cadastrados</h4>
+          <p id="cupcakeCount">-</p>
+        </div>
+        <div class="card small-card">
+          <h4>Promoções ativas</h4>
+          <p id="promoCount">-</p>
+        </div>
+        <div class="card small-card">
+          <h4>Pedidos pendentes</h4>
+          <p id="statusPending">-</p>
+        </div>
+        <div class="card small-card">
+          <h4>Em preparação</h4>
+          <p id="statusPreparing">-</p>
+        </div>
+        <div class="card small-card">
+          <h4>Em rota de entrega</h4>
+          <p id="statusDelivering">-</p>
+        </div>
+        <div class="card small-card">
+          <h4>Entregues</h4>
+          <p id="statusDelivered">-</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <button class="btn" onclick="location.href='admin_cupcakes.html'">Cupcakes</button>
+      <button class="btn" onclick="location.href='admin_promotions.html'">Promoções</button>
+      <button class="btn" onclick="location.href='admin_orders.html'">Pedidos</button>
+    </section>
+  </main>
+
+  <script type="module" src="./js/admin/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhe do pedido</title>
+    <link rel="stylesheet" href="./CSS/style.css">
+</head>
+<body>
+    <main class="container">
+        <h2>Detalhes do pedido</h2>
+        <div id="orderInfo" class="card"></div>
+        <div id="orderItems"></div>
+        <button id="review" class="btn">Avaliar pedido</button>
+    </main>
+    <script type="module" src="./js/user/order_detail.js"></script>
+    <script type="module">
+  import { loadMenu } from './js/common/menu.js';
+  loadMenu();
+</script>
+
+</body>
+</html>
