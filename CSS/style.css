@@ -119,6 +119,24 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 0 2px rgba(234,29,44,0.1);
 }
 
+
+.login-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.login-buttons .btn,
+.login-buttons .btn-ghost {
+  width: 100%;
+  max-width: 200px; /* mesma largura para ambos */
+  text-align: center;
+}
+
+
 /* Cards */
 
 .card {
