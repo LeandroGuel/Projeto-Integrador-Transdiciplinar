@@ -4,29 +4,43 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Entrega / Retirada</title>
-  <link rel="stylesheet" href="./CSS/style.css">
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
   <main class="container">
     <h2>Forma de recebimento</h2>
+
     <div class="card delivery-options">
       <label>
-        <input type="radio" name="deliveryType" value="delivery" checked> Entrega
+        <input type="radio" name="deliveryType" value="delivery"> Entrega
       </label>
       <label>
         <input type="radio" name="deliveryType" value="pickup"> Retirada
       </label>
     </div>
 
-    <button id="pickupCheckoutBtn" class="btn">Ir para pagamento</button>
+    <div style="margin-bottom:12px;">
+      <button id="pickupCheckoutBtn" class="btn" style="display:none;">Ir para pagamento</button>
+    </div>
+
+    <div id="deliveryActions" class="card" style="display:none; margin-bottom:20px;">
+      <h3>Entrega</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button id="btnUseSavedOption" class="btn">Usar endereço do cadastro</button>
+        <button id="btnNewAddressOption" class="btn-ghost">Incluir novo endereço</button>
+      </div>
+    </div>
 
     <div id="savedAddressesSection" class="card" style="display:none; margin-bottom:20px;">
       <h3>Escolher endereço salvo</h3>
       <select id="savedAddresses" class="input"></select>
-      <button id="useSavedAddress" class="btn" style="margin-top:8px;">Usar endereço selecionado</button>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button id="useSavedAddress" class="btn">Usar endereço selecionado</button>
+        <button id="hideSavedAddresses" class="btn-ghost">Fechar</button>
+      </div>
     </div>
 
-    <div id="newAddressSection">
+    <div id="newAddressSection" class="card" style="display:none;">
       <h3>Cadastrar novo endereço</h3>
       <input id="cep" class="input" placeholder="CEP">
       <input id="street" class="input" placeholder="Rua">
@@ -34,7 +48,11 @@
       <input id="complement" class="input" placeholder="Complemento">
       <input id="city" class="input" placeholder="Cidade">
       <input id="state" class="input" placeholder="Estado">
-      <button id="saveAddress" class="btn">Salvar novo endereço</button>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button id="saveAddress" class="btn">Salvar novo endereço</button>
+        <button id="saveAndCheckout" class="btn">Salvar e ir para pagamento</button>
+        <button id="hideNewAddress" class="btn-ghost">Fechar</button>
+      </div>
     </div>
   </main>
 
@@ -45,4 +63,3 @@
   </script>
 </body>
 </html>
-
