@@ -129,7 +129,7 @@ async function addOrderItems(orderId, items) {
 // ---------------- SIMULAÇÃO DE PAGAMENTO ----------------
 async function simulatePayment(orderId, type) {
   try {
-    await fetch('https://httpbin.org/post', {
+    await fetch('https://mocki.io/v1/ce1bb7f3-b98d-47cd-b5b7-78e8f4e3b7fa', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: `simulate_${type}`, orderId })
