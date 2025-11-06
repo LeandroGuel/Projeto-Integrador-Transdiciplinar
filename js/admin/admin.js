@@ -1,5 +1,6 @@
+// admin.js
 import supabase from '../supabase-client.js';
-import { alertWarning, alertError, alertSuccess, alertConfirm, alertInfo } from '../alert.js';
+import { alertToast } from '../alert.js'; // usaremos o toast para notificação discreta
 
 const cupcakeCountEl = document.getElementById('cupcakeCount');
 const promoCountEl = document.getElementById('promoCount');
@@ -34,6 +35,8 @@ const statusDeliveredEl = document.getElementById('statusDelivered');
     }
 
     loadDashboard();
+    listenForNewOrders(); // 🔔 ativa o listener em tempo real
+
   } catch (err) {
     console.error('Erro inesperado ao verificar admin:', err);
     alert('Erro inesperado. Faça login novamente.');
@@ -70,7 +73,6 @@ async function loadDashboard() {
       return;
     }
 
-    // Contadores por status
     const statusCount = {
       Pendente: 0,
       'Em preparação': 0,
@@ -91,22 +93,30 @@ async function loadDashboard() {
   }
 }
 
-
+// 🔔 Escuta em tempo real por novos pedidos
 function listenForNewOrders() {
-  supabase
-    .channel('orders-realtime')
+  const channel = supabase
+    .channel('realtime-orders')
     .on(
       'postgres_changes',
-      { event: 'INSERT', schema: 'public', table: 'orders' },
-      payload => {
-        const order = payload.new;
-        alertInfo('Novo pedido recebido!', `Pedido #${String(order.id).slice(0, 8)} foi criado.`);
-        loadDashboard(); // Atualiza contadores do dashboard
+      {
+        event: 'INSERT', // novos registros
+        schema: 'public',
+        table: 'orders',
+      },
+      (payload) => {
+        console.log('Novo pedido recebido:', payload.new);
+
+        alertToast(
+          `Novo pedido recebido! Total: R$ ${Number(payload.new.total).toFixed(2)}`,
+          'info'
+        );
+
+        // Atualiza os contadores do dashboard
+        loadDashboard();
       }
     )
     .subscribe();
+
+  console.log('👂 Aguardando novos pedidos em tempo real...');
 }
-
-
-loadDashboard();
-listenForNewOrders();
