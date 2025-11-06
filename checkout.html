@@ -1,27 +1,31 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagamento</title>
-    <link rel="stylesheet" href="./CSS/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagamento</title>
+  <link rel="stylesheet" href="./CSS/style.css">
 </head>
 <body>
-    <main class="container">
-        <h2>Pagamento</h2>
-        <p>Selecione a forma de pagamento:</p>
-        <select id="paymentMethod" class="input">
-            <option value="pix">PIX</option>
-            <option value="cartao">Cartão de crédito</option>
-        </select>
-        <button id="pay" class="btn">Pagar</button>
-        <div id="paymentResult" class="card" style="margin-top: 16px;"></div>
-    </main>
-    <script type="module" src="./js/user/checkout.js"></script>
-    <script type="module">
-  import { loadMenu } from './js/common/menu.js';
-  loadMenu();
-</script>
+    
+<main class="container">
+  <h2>Pagamento</h2>
+  <div id="orderTotal" class="card" style="margin-bottom: 16px;"></div>
 
+  <p>Selecione a forma de pagamento:</p>
+  <select id="paymentMethod" class="input">
+    <option value="pix">PIX</option>
+    <option value="cartao">Cartão de crédito</option>
+  </select>
+  <button id="pay" class="btn">Pagar</button>
+
+  <div id="paymentResult" class="card" style="margin-top: 16px;"></div>
+</main>
+
+  <script type="module" src="./js/user/checkout.js"></script>
+  <script type="module">
+    import { loadMenu } from './js/common/menu.js';
+    loadMenu();
+  </script>
 </body>
 </html>
