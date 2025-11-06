@@ -1,4 +1,5 @@
 import supabase from '../supabase-client.js';
+import { alertWarning, alertError, alertSuccess, alertConfirm, alertInfo } from '../alert.js';
 
 const cupcakeCountEl = document.getElementById('cupcakeCount');
 const promoCountEl = document.getElementById('promoCount');
@@ -89,3 +90,23 @@ async function loadDashboard() {
     console.error('Erro ao carregar resumo:', err);
   }
 }
+
+
+function listenForNewOrders() {
+  supabase
+    .channel('orders-realtime')
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'orders' },
+      payload => {
+        const order = payload.new;
+        alertInfo('Novo pedido recebido!', `Pedido #${String(order.id).slice(0, 8)} foi criado.`);
+        loadDashboard(); // Atualiza contadores do dashboard
+      }
+    )
+    .subscribe();
+}
+
+
+loadDashboard();
+listenForNewOrders();
