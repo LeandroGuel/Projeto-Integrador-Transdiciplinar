@@ -547,3 +547,68 @@ body {
   margin-top: 10px;
   display: none;
 }
+
+.qty-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.cart-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-qty {
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  border-radius: 8px;
+  border: 2px solid #e63946; /* vermelho principal */
+  background-color: white;
+  color: #e63946;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-qty:hover {
+  background-color: #e63946;
+  color: white;
+}
+
+.btn-trash {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 2px solid white;
+  border-radius: 8px;
+  background: #e63946;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-trash:hover {
+  background-color: white;
+  color: #e63946;
+  transform: scale(1.05);
+}
+
+.btn-trash svg {
+  width: 18px;
+  height: 18px;
+}
