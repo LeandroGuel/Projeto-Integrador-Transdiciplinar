@@ -8,6 +8,7 @@ const searchInput = document.getElementById('searchTerm');
 const searchBtn = document.getElementById('btnSearch');
 const logoutBtn = document.getElementById('logoutBtn');
 
+// ---------------- AUTENTICAÇÃO ----------------
 async function checkAuth() {
   const { data, error } = await supabase.auth.getUser();
   if (error || !data?.user) {
@@ -22,7 +23,7 @@ logoutBtn?.addEventListener('click', async () => {
   });
 });
 
-//Promoções
+// ---------------- PROMOÇÕES ----------------
 async function loadPromotions() {
   const now = new Date().toISOString();
   const { data, error } = await supabase
@@ -40,16 +41,11 @@ async function loadPromotions() {
 
   promoDiv.innerHTML = '';
 
-  if (!data || !data.length) {
-    promoDiv.innerHTML = '';
-    return;
-  }
+  if (!data || !data.length) return;
 
   data.forEach(p => {
     let imageUrl = p.image_url || null;
-    if (imageUrl && !imageUrl.startsWith('http')) {
-      imageUrl = getPublicUrl(imageUrl);
-    }
+    if (imageUrl && !imageUrl.startsWith('http')) imageUrl = getPublicUrl(imageUrl);
     if (!imageUrl) imageUrl = '../images/placeholder.png';
 
     const banner = document.createElement('div');
@@ -65,7 +61,41 @@ async function loadPromotions() {
   });
 }
 
-//Cupcakes
+// ---------------- CUPCAKES ----------------
+function renderCupcake(c) {
+  let imageUrl = c.image_url || null;
+  if (imageUrl && !imageUrl.startsWith('http')) imageUrl = getPublicUrl(imageUrl);
+  if (!imageUrl) imageUrl = '../images/placeholder.png';
+
+  const d = document.createElement('div');
+  d.className = 'card cupcake-card';
+  d.innerHTML = `
+    <img src="${imageUrl}" alt="${c.name}"/>
+    <div class="cupcake-info">
+      <h3>${c.name}</h3>
+      <p class="small-muted">${c.flavor || ''}</p>
+      <div class="price">${toBRL(c.price)}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="btn-ghost qty-btn" data-action="minus" data-id="${c.id}">−</button>
+        <span class="qty" data-id="${c.id}" style="min-width:30px;text-align:center;">0</span>
+        <button class="btn-ghost qty-btn" data-action="plus" data-id="${c.id}">+</button>
+      </div>
+      <button class="btn add-cart" 
+              data-id="${c.id}" 
+              data-name="${c.name}" 
+              data-price="${c.price}" 
+              data-image="${imageUrl}">
+        Adicionar ao carrinho
+      </button>
+      <button class="btn-ghost small" onclick="location.href='cupcake.html?id=${c.id}'">Detalhes</button>
+    </div>
+  `;
+  return d;
+}
+
+// ---------------- CARREGAR CUPCAKES ----------------
 async function loadCupcakes(term = '') {
   cupcakesDiv.innerHTML = '<div class="card list-empty">Carregando...</div>';
 
@@ -75,12 +105,9 @@ async function loadCupcakes(term = '') {
     .eq('active', true)
     .order('created_at', { ascending: false });
 
-  if (term) {
-    query = query.or(`name.ilike.%${term}%,flavor.ilike.%${term}%,ingredients.ilike.%${term}%`);
-  }
+  if (term) query = query.or(`name.ilike.%${term}%,flavor.ilike.%${term}%,ingredients.ilike.%${term}%`);
 
   const { data, error } = await query;
-
   if (error) {
     console.error('Erro ao carregar cupcakes:', error.message);
     cupcakesDiv.innerHTML = '<div class="card list-empty">Erro ao carregar cupcakes</div>';
@@ -94,37 +121,11 @@ async function loadCupcakes(term = '') {
     return;
   }
 
-  (data || []).forEach(c => {
-    let imageUrl = c.image_url || null;
-    if (imageUrl && !imageUrl.startsWith('http')) {
-      imageUrl = getPublicUrl(imageUrl);
-    }
-    if (!imageUrl) imageUrl = '../images/placeholder.png';
-
-    const d = document.createElement('div');
-    d.className = 'card cupcake-card';
-    d.innerHTML = `
-      <img src="${imageUrl}" alt="${c.name}"/>
-      <div class="cupcake-info">
-        <h3>${c.name}</h3>
-        <p class="small-muted">${c.flavor || ''}</p>
-        <div class="price">${toBRL(c.price)}</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <button class="btn add-btn" data-id="${c.id}" data-name="${c.name}" data-price="${c.price}">Adicionar</button>
-        <button class="btn-ghost" onclick="location.href='cupcake.html?id=${c.id}'">Detalhes</button>
-      </div>
-    `;
-    cupcakesDiv.appendChild(d);
-  });
+  data.forEach(c => cupcakesDiv.appendChild(renderCupcake(c)));
 }
 
-//Busca
-searchBtn?.addEventListener('click', () => {
-  const term = searchInput.value.trim();
-  loadCupcakes(term);
-});
-
+// ---------------- EVENTOS DE BUSCA ----------------
+searchBtn?.addEventListener('click', () => loadCupcakes(searchInput.value.trim()));
 searchInput?.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     e.preventDefault();
@@ -132,27 +133,47 @@ searchInput?.addEventListener('keypress', (e) => {
   }
 });
 
-//Carrinho
+// ---------------- AJUSTE DE QUANTIDADE ----------------
 document.addEventListener('click', (e) => {
-  const btn = e.target.closest('.add-btn');
+  const btn = e.target.closest('.qty-btn');
+  if (!btn) return;
+
+  const id = btn.dataset.id;
+  const action = btn.dataset.action;
+  const qtyEl = document.querySelector(`.qty[data-id="${id}"]`);
+  let qty = parseInt(qtyEl.textContent) || 0;
+
+  if (action === 'plus') qty++;
+  if (action === 'minus' && qty > 0) qty--;
+
+  qtyEl.textContent = qty;
+});
+
+// ---------------- ADICIONAR AO CARRINHO ----------------
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.add-cart');
   if (!btn) return;
 
   const id = btn.dataset.id;
   const name = btn.dataset.name;
-  const price = parseFloat(btn.dataset.price || 0);
+  const price = parseFloat(btn.dataset.price);
+  const image = btn.dataset.image;
+  const qty = parseInt(document.querySelector(`.qty[data-id="${id}"]`)?.textContent) || 0;
+
+  if (qty <= 0) return alertSuccess('Selecione uma quantidade antes de adicionar.');
 
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  const found = cart.find(i => i.id === id);
-  const imageEl = btn.closest('.card').querySelector('img');
-  const image = imageEl ? imageEl.src : null;
+  const existing = cart.find(i => i.id === id);
 
-  if (found) found.quantity += 1;
-  else cart.push({ id, name, price, quantity: 1, image });
+  if (existing) existing.quantity += qty;
+  else cart.push({ id, name, price, image, quantity: qty });
 
   localStorage.setItem('cart', JSON.stringify(cart));
-  alertSuccess(`${name} adicionado ao carrinho`);
+  alertSuccess(`${name} (${qty}x) adicionado ao carrinho`);
+  document.querySelector(`.qty[data-id="${id}"]`).textContent = '0';
 });
 
+// ---------------- INICIALIZAÇÃO ----------------
 await checkAuth();
 loadPromotions();
 loadCupcakes();
