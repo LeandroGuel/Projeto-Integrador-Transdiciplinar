@@ -23,12 +23,24 @@
     <input id="phone" class="input" placeholder="Telefone">
 
     <h3 style="margin-top:24px;">Endereço</h3>
-    <input id="cep" class="input" placeholder="CEP">
+      <div style="position:relative;">
+        <input id="cep" class="input" placeholder="CEP">
+          <span id="cepLoading" style="
+            display:none;
+            position:absolute;
+            right:12px;
+            top:50%;
+            transform:translateY(-50%);
+            font-size:18px;
+            color:#f06292;
+          ">⏳</span>
+      </div>
     <input id="street" class="input" placeholder="Rua">
     <input id="number" class="input" placeholder="Número">
     <input id="complement" class="input" placeholder="Complemento">
     <input id="city" class="input" placeholder="Cidade">
     <input id="state" class="input" placeholder="Estado">
+
 
     <button id="saveProfile" class="btn" style="margin-top:20px;">Salvar alterações</button>
   </main>
