@@ -26,6 +26,18 @@ export async function alertSuccess(title, text = '') {
   });
 }
 
+// Alerta informativo (para notificações de atualização ou novos pedidos)
+export async function alertInfo(title, text = '') {
+  return swalBase.fire({
+    icon: 'info',
+    title,
+    text,
+    confirmButtonText: 'Ok',
+    iconColor: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()
+  });
+}
+
+
 // Alerta de erro
 export async function alertError(title, text = '') {
   return swalBase.fire({
