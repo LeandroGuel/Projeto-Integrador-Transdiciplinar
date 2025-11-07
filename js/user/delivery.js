@@ -123,7 +123,6 @@ saveNewBtn?.addEventListener('click', async () => {
     return alertError('Erro ao salvar endereço.');
   }
 
-  // marca como endereço escolhido
   localStorage.setItem('deliveryType', 'delivery');
   localStorage.setItem('addressId', inserted.id);
 
@@ -180,10 +179,33 @@ pickupCheckoutBtn?.addEventListener('click', () => {
   window.location.href = 'checkout.html';
 });
 
+// ---------------- BUSCA AUTOMÁTICA DE ENDEREÇO POR CEP ----------------
+const cepInput = document.getElementById('cep');
+
+if (cepInput) {
+  cepInput.addEventListener('input', async (e) => {
+    const cep = e.target.value.replace(/\D/g, '');
+    if (cep.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const data = await res.json();
+
+        if (!data.erro) {
+          document.getElementById('street').value = data.logradouro || '';
+          document.getElementById('city').value = data.localidade || '';
+          document.getElementById('state').value = data.uf || '';
+          if (document.getElementById('neighborhood')) {
+            document.getElementById('neighborhood').value = data.bairro || '';
+          }
+        }
+      } catch (err) {
+        console.error('Erro ao buscar CEP:', err);
+      }
+    }
+  });
+}
+
 // Início - esconder seções e carregar se necessário
 hideAllAddressSections();
-
 const checked = deliveryRadios.find(r => r.checked);
-if (checked) {
-  checked.dispatchEvent(new Event('change'));
-}
+if (checked) checked.dispatchEvent(new Event('change'));
