@@ -43,20 +43,15 @@ function render() {
       <img src="${imageUrl}" alt="${it.name}" />
       <div class="cupcake-info">
         <h3>${it.name}</h3>
-        <p class="small-muted">Qtd: ${it.quantity}</p>
         <div class="price">${toBRL(it.price)}</div>
       </div>
-      <div class="cart-actions">
-        <div class="qty-controls">
-          <button class="btn-qty" data-idx="${idx}" data-action="dec">-</button>
-          <button class="btn-qty" data-idx="${idx}" data-action="inc">+</button>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="btn-ghost qty-btn" data-action="dec" data-idx="${idx}">−</button>
+          <span class="qty" style="min-width:30px;text-align:center;">${it.quantity}</span>
+          <button class="btn-ghost qty-btn" data-action="inc" data-idx="${idx}">+</button>
         </div>
-        <button class="btn-trash" data-idx="${idx}" data-action="del" title="Remover item">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5-3h4a1 1 0 0 1 1 1v1H9V4a1 1 0 0 1 1-1z"></path>
-          </svg>
-        </button>
+        <button class="btn-ghost small remove-btn" data-action="del" data-idx="${idx}">Remover item</button>
       </div>
     `;
     cartItems.appendChild(d);
