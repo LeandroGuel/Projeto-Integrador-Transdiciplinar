@@ -1,24 +1,46 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avaliar pedido</title>
-    <link rel="stylesheet" href="./CSS/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avaliar pedido</title>
+  <link rel="stylesheet" href="./CSS/style.css">
+  <style>
+    .star-rating {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 20px 0;
+      font-size: 34px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .star {
+      color: #ccc;
+      transition: color 0.2s;
+    }
+    .star.hover,
+    .star.active {
+      color: #FFD700; /* dourado */
+    }
+  </style>
 </head>
 <body>
-    <main class="container">
-        <h2>Avaliar pedido</h2>
-        <select id="rating" class="input">
-            <option value="5">5 - Excelente</option>
-            <option value="4">4 - Bom</option>
-            <option value="3">3 - Regular</option>
-            <option value="2">2 - Ruim</option>
-            <option value="1">1 - Péssimo</option>
-        </select>
-        <textarea id="comment" class="input" placeholder="Deixe um comentário"></textarea>
-        <button id="sendReview" class="btn">Enviar avaliação</button>
-    </main>
-    <script type="module" src="./js/user/review.js"></script>
+  <main class="container">
+    <h2>Avaliar pedido</h2>
+
+    <div class="star-rating" id="starRating">
+      <span class="star" data-value="1">★</span>
+      <span class="star" data-value="2">★</span>
+      <span class="star" data-value="3">★</span>
+      <span class="star" data-value="4">★</span>
+      <span class="star" data-value="5">★</span>
+    </div>
+
+    <textarea id="comment" class="input" placeholder="Deixe um comentário"></textarea>
+    <button id="sendReview" class="btn">Enviar avaliação</button>
+  </main>
+
+  <script type="module" src="./js/user/review.js"></script>
 </body>
 </html>
