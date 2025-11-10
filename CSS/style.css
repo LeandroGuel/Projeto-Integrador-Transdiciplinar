@@ -576,7 +576,7 @@ body {
   height: 36px;
   font-size: 18px;
   border-radius: 8px;
-  border: 2px solid #e63946; /* vermelho principal */
+  border: 2px solid #e63946;
   background-color: white;
   color: #e63946;
   cursor: pointer;
@@ -611,4 +611,21 @@ body {
 .btn-trash svg {
   width: 18px;
   height: 18px;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  box-shadow: 0 0 0 2px white;
 }
