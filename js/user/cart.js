@@ -1,6 +1,7 @@
 import { toBRL } from '../helpers.js';
 import { alertWarning, alertError, alertSuccess, alertConfirm } from '../alert.js';
 import supabase, { getPublicUrl } from '../supabase-client.js';
+import { updateCartBadge } from '../common/menu.js';
 
 const cartItems = document.getElementById('cartItems');
 const subtotalEl = document.getElementById('subtotal');
@@ -116,6 +117,7 @@ document.addEventListener('click', async (e) => {
       async () => {
         cart.splice(idx, 1);
         localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartBadge();
         render();
         await alertSuccess('Item removido com sucesso!');
       }
@@ -124,6 +126,7 @@ document.addEventListener('click', async (e) => {
   }
 
   localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartBadge();
   render();
 });
 
