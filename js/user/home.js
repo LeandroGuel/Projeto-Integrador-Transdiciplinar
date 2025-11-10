@@ -1,179 +1,144 @@
-import supabase, { getPublicUrl } from '../supabase-client.js';
 import { toBRL } from '../helpers.js';
-import { alertSuccess, alertConfirm } from '../alert.js';
+import { alertWarning, alertError, alertSuccess, alertConfirm } from '../alert.js';
+import supabase, { getPublicUrl } from '../supabase-client.js';
+import { updateCartBadge } from '../common/menu.js';
 
-const promoDiv = document.getElementById('promotions');
-const cupcakesDiv = document.getElementById('cupcakes');
-const searchInput = document.getElementById('searchTerm');
-const searchBtn = document.getElementById('btnSearch');
-const logoutBtn = document.getElementById('logoutBtn');
+const cartItems = document.getElementById('cartItems');
+const subtotalEl = document.getElementById('subtotal');
+const discountEl = document.getElementById('discount');
+const totalEl = document.getElementById('total');
+const checkoutBtn = document.getElementById('checkout');
+const couponInput = document.getElementById('couponInput');
+const applyCouponBtn = document.getElementById('applyCoupon');
 
-// ---------------- AUTENTICAÇÃO ----------------
-async function checkAuth() {
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data?.user) {
-    window.location.href = 'login.html';
+let appliedCoupon = null;
+let discountPercent = 0;
+
+// ---------------- RENDERIZAÇÃO ----------------
+function render() {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  cartItems.innerHTML = '';
+
+  if (!cart.length) {
+    cartItems.innerHTML = '<div class="card list-empty">Carrinho vazio</div>';
+    subtotalEl.innerText = 'Subtotal: ' + toBRL(0);
+    discountEl.innerText = 'Desconto: ' + toBRL(0);
+    totalEl.innerText = 'Total: ' + toBRL(0);
+    return;
   }
+
+  let subtotal = 0;
+
+  cart.forEach((it, idx) => {
+    subtotal += it.price * it.quantity;
+
+    let imageUrl = it.image_url || it.image || null;
+    if (imageUrl && !imageUrl.startsWith('http')) {
+      imageUrl = getPublicUrl(imageUrl);
+    }
+    if (!imageUrl) imageUrl = '../images/placeholder.png';
+
+    const d = document.createElement('div');
+    d.className = 'card cupcake-card';
+    d.innerHTML = `
+      <img src="${imageUrl}" alt="${it.name}" />
+      <div class="cupcake-info">
+        <h3>${it.name}</h3>
+        <div class="price">${toBRL(it.price)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="btn-ghost qty-btn" data-action="dec" data-idx="${idx}">−</button>
+          <span class="qty" style="min-width:30px;text-align:center;">${it.quantity}</span>
+          <button class="btn-ghost qty-btn" data-action="inc" data-idx="${idx}">+</button>
+        </div>
+        <button class="btn-ghost small remove-btn" data-action="del" data-idx="${idx}">Remover item</button>
+      </div>
+    `;
+    cartItems.appendChild(d);
+  });
+
+  const discountValue = (subtotal * discountPercent) / 100;
+  const total = subtotal - discountValue;
+
+  subtotalEl.innerText = 'Subtotal: ' + toBRL(subtotal);
+  discountEl.innerText = `Desconto (${discountPercent}%): ${toBRL(discountValue)}`;
+  totalEl.innerText = 'Total: ' + toBRL(total);
 }
 
-logoutBtn?.addEventListener('click', async () => {
-  await alertConfirm('Sair da conta', 'Deseja realmente encerrar sua sessão?', async () => {
-    await supabase.auth.signOut();
-    window.location.href = 'login.html';
-  });
-});
+// ---------------- CUPOM DE DESCONTO ----------------
+applyCouponBtn?.addEventListener('click', async () => {
+  const code = couponInput.value.trim().toUpperCase();
+  if (!code) return alertWarning('Informe um código de cupom');
 
-// ---------------- PROMOÇÕES ----------------
-async function loadPromotions() {
   const now = new Date().toISOString();
   const { data, error } = await supabase
     .from('promotions')
     .select('*')
-    .eq('active', true)
+    .eq('coupon_code', code)
     .lte('start_at', now)
-    .gte('end_at', now);
-
-  if (error) {
-    console.error('Erro ao carregar promoções:', error.message);
-    promoDiv.innerHTML = '<div class="card list-empty">Erro ao carregar promoções</div>';
-    return;
-  }
-
-  promoDiv.innerHTML = '';
-
-  if (!data || !data.length) return;
-
-  data.forEach(p => {
-    let imageUrl = p.image_url || null;
-    if (imageUrl && !imageUrl.startsWith('http')) imageUrl = getPublicUrl(imageUrl);
-    if (!imageUrl) imageUrl = '../images/placeholder.png';
-
-    const banner = document.createElement('div');
-    banner.className = 'promo-banner-large';
-    banner.innerHTML = `
-      <img src="${imageUrl}" alt="${p.title}">
-      <div class="promo-banner-text">
-        <h3>${p.title}</h3>
-        ${p.coupon_code ? `<p>Use o cupom <strong>${p.coupon_code}</strong> e ganhe desconto!</p>` : ''}
-      </div>
-    `;
-    promoDiv.appendChild(banner);
-  });
-}
-
-// ---------------- CUPCAKES ----------------
-function renderCupcake(c) {
-  let imageUrl = c.image_url || null;
-  if (imageUrl && !imageUrl.startsWith('http')) imageUrl = getPublicUrl(imageUrl);
-  if (!imageUrl) imageUrl = '../images/placeholder.png';
-
-  const d = document.createElement('div');
-  d.className = 'card cupcake-card';
-  d.innerHTML = `
-    <img src="${imageUrl}" alt="${c.name}"/>
-    <div class="cupcake-info">
-      <h3>${c.name}</h3>
-      <p class="small-muted">${c.flavor || ''}</p>
-      <div class="price">${toBRL(c.price)}</div>
-    </div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <button class="btn-ghost qty-btn" data-action="minus" data-id="${c.id}">−</button>
-        <span class="qty" data-id="${c.id}" style="min-width:30px;text-align:center;">0</span>
-        <button class="btn-ghost qty-btn" data-action="plus" data-id="${c.id}">+</button>
-      </div>
-      <button class="btn add-cart" 
-              data-id="${c.id}" 
-              data-name="${c.name}" 
-              data-price="${c.price}" 
-              data-image="${imageUrl}">
-        Adicionar ao carrinho
-      </button>
-      <button class="btn-ghost small" onclick="location.href='cupcake.html?id=${c.id}'">Detalhes</button>
-    </div>
-  `;
-  return d;
-}
-
-// ---------------- CARREGAR CUPCAKES ----------------
-async function loadCupcakes(term = '') {
-  cupcakesDiv.innerHTML = '<div class="card list-empty">Carregando...</div>';
-
-  let query = supabase
-    .from('cupcakes')
-    .select('*')
+    .gte('end_at', now)
     .eq('active', true)
-    .order('created_at', { ascending: false });
+    .single();
 
-  if (term) query = query.or(`name.ilike.%${term}%,flavor.ilike.%${term}%,ingredients.ilike.%${term}%`);
-
-  const { data, error } = await query;
-  if (error) {
-    console.error('Erro ao carregar cupcakes:', error.message);
-    cupcakesDiv.innerHTML = '<div class="card list-empty">Erro ao carregar cupcakes</div>';
+  if (error || !data) {
+    appliedCoupon = null;
+    discountPercent = 0;
+    alertError('Cupom inválido ou expirado');
+    render();
     return;
   }
 
-  cupcakesDiv.innerHTML = '';
-
-  if (!data || !data.length) {
-    cupcakesDiv.innerHTML = '<div class="card list-empty">Nenhum cupcake encontrado</div>';
-    return;
-  }
-
-  data.forEach(c => cupcakesDiv.appendChild(renderCupcake(c)));
-}
-
-// ---------------- EVENTOS DE BUSCA ----------------
-searchBtn?.addEventListener('click', () => loadCupcakes(searchInput.value.trim()));
-searchInput?.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    loadCupcakes(searchInput.value.trim());
-  }
+  appliedCoupon = data.coupon_code;
+  discountPercent = data.discount_percent || 0;
+  alertSuccess(`Cupom "${appliedCoupon}" aplicado: ${discountPercent}% de desconto`);
+  render();
 });
 
-// ---------------- AJUSTE DE QUANTIDADE ----------------
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('.qty-btn');
-  if (!btn) return;
-
-  const id = btn.dataset.id;
-  const action = btn.dataset.action;
-  const qtyEl = document.querySelector(`.qty[data-id="${id}"]`);
-  let qty = parseInt(qtyEl.textContent) || 0;
-
-  if (action === 'plus') qty++;
-  if (action === 'minus' && qty > 0) qty--;
-
-  qtyEl.textContent = qty;
-});
-
-// ---------------- ADICIONAR AO CARRINHO ----------------
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('.add-cart');
-  if (!btn) return;
-
-  const id = btn.dataset.id;
-  const name = btn.dataset.name;
-  const price = parseFloat(btn.dataset.price);
-  const image = btn.dataset.image;
-  const qty = parseInt(document.querySelector(`.qty[data-id="${id}"]`)?.textContent) || 0;
-
-  if (qty <= 0) return alertSuccess('Selecione uma quantidade antes de adicionar.');
+// ---------------- AÇÕES DO CARRINHO ----------------
+document.addEventListener('click', async (e) => {
+  const action = e.target.closest('[data-action]')?.dataset.action;
+  const idx = Number(e.target.closest('[data-action]')?.dataset.idx);
+  if (typeof action === 'undefined' || isNaN(idx)) return;
 
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  const existing = cart.find(i => i.id === id);
 
-  if (existing) existing.quantity += qty;
-  else cart.push({ id, name, price, image, quantity: qty });
+  if (action === 'inc') cart[idx].quantity++;
+  if (action === 'dec') {
+    cart[idx].quantity--;
+    if (cart[idx].quantity <= 0) cart.splice(idx, 1);
+  }
+
+  if (action === 'del') {
+    const item = cart[idx];
+    await alertConfirm(
+      'Remover item',
+      `Deseja remover "${item.name}" do carrinho?`,
+      async () => {
+        cart.splice(idx, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartBadge();
+        render();
+        await alertSuccess('Item removido com sucesso!');
+      }
+    );
+    return;
+  }
 
   localStorage.setItem('cart', JSON.stringify(cart));
-  alertSuccess(`${name} (${qty}x) adicionado ao carrinho`);
-  document.querySelector(`.qty[data-id="${id}"]`).textContent = '0';
+  updateCartBadge();
+  render();
 });
 
-// ---------------- INICIALIZAÇÃO ----------------
-await checkAuth();
-loadPromotions();
-loadCupcakes();
+// ---------------- CHECKOUT ----------------
+checkoutBtn?.addEventListener('click', () => {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  if (!cart.length) return alertWarning('Carrinho vazio');
+
+  const couponData = { code: appliedCoupon, discount: discountPercent };
+  localStorage.setItem('couponData', JSON.stringify(couponData));
+
+  location.href = 'delivery.html';
+});
+
+render();
